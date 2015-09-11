@@ -25,7 +25,7 @@ public class CoolWeatherDB {
     /**
      * 数据库版本
      */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private static CoolWeatherDB coolWeatherDB;
 
@@ -47,7 +47,7 @@ public class CoolWeatherDB {
      * @return   获取CoolWeatherDB的实例
      */
     public synchronized static CoolWeatherDB getInstance (Context context){
-        if(coolWeatherDB != null){
+        if(coolWeatherDB == null){
             coolWeatherDB = new CoolWeatherDB(context);
         }
         return coolWeatherDB;
@@ -98,6 +98,9 @@ public class CoolWeatherDB {
             values.put("city_name",city.getCityName());
             values.put("city_code",city.getCityCode());
             values.put("province_id",city.getProvinceId());
+
+            //添加数据的时候，insert接受三个参数，第一个是表名，第二个是用于在未指定添加数据的
+            //情况下给某些可为空的列自动赋值null，一般用不到这个功能，直接传入null，第三个是ContentValues对象
             db.insert("City", null, values);
         }
     }
@@ -109,7 +112,7 @@ public class CoolWeatherDB {
      */
     public List<City> loadCity(int provinceId){
         List<City> list = new ArrayList<City>();
-        Cursor cursor = db.query("City",null,"province_id = ?",new String[]{String.valueOf(provinceId)},null,null,null);
+        Cursor cursor = db.query("City",null,"province_id=?",new String[]{String.valueOf(provinceId)},null,null,null);
         if(cursor.moveToFirst()){
             do {
                 City city = new City();
